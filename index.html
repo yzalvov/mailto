@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
+<meta name="robots" content="noindex">
+<title>Email</title>
+<style>
+  body { margin: 0; padding: 32px 16px; font: 18px/1.4 -apple-system, system-ui, sans-serif; background: #fff; color: #111; text-align: center; }
+  a.open { display: inline-block; margin: 24px 0; padding: 18px 28px; border-radius: 12px; background: #1a73e8; color: #fff; font-size: 22px; font-weight: 600; text-decoration: none; }
+  p { max-width: 28em; margin: 0 auto; }
+  [hidden] { display: none; }
+  @media (prefers-color-scheme: dark) { body { background: #111; color: #eee; } }
+</style>
+</head>
+<body>
+<div id="ok" hidden>
+  <a class="open" id="open" href="#">Open email</a>
+</div>
+<p id="bad" hidden>Incomplete link.</p>
+<script>
+(function () {
+  var q = new URLSearchParams(location.hash.slice(1));
+  var to = (q.get("to") || "").trim();
+  var su = q.get("su") || "";
+  var body = q.get("body") || "";
+  var one = /^[A-Za-z0-9._+\-]+@[A-Za-z0-9\-]+(\.[A-Za-z0-9\-]+)+$/;
+  if (!one.test(to) || !su || !body) {
+    document.getElementById("bad").hidden = false;
+    return;
+  }
+  var enc = function (s) { return encodeURIComponent(s.replace(/\r?\n/g, "\r\n")); };
+  var href = "mailto:" + to + "?subject=" + enc(su) + "&body=" + enc(body);
+  document.getElementById("open").href = href;
+  document.getElementById("ok").hidden = false;
+  location.href = href;
+})();
+</script>
+</body>
+</html>
