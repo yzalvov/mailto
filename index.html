@@ -23,6 +23,21 @@
 <script>
 (function () {
   var q = new URLSearchParams(location.hash.slice(1));
+  var open = function (href) {
+    document.getElementById("open").href = href;
+    document.getElementById("ok").hidden = false;
+    location.href = href;
+  };
+  if (q.has("msg")) {
+    // One mail in Mail.app by its Message-ID, plain <local@host> only.
+    var m = /^<([A-Za-z0-9._+\-=$]+@[A-Za-z0-9.\-]+)>$/.exec(q.get("msg"));
+    if (!m) {
+      document.getElementById("bad").hidden = false;
+      return;
+    }
+    open("message://%3C" + m[1] + "%3E");
+    return;
+  }
   var to = (q.get("to") || "").trim();
   var su = q.get("su") || "";
   var body = q.get("body") || "";
@@ -32,10 +47,7 @@
     return;
   }
   var enc = function (s) { return encodeURIComponent(s.replace(/\r?\n/g, "\r\n")); };
-  var href = "mailto:" + to + "?subject=" + enc(su) + "&body=" + enc(body);
-  document.getElementById("open").href = href;
-  document.getElementById("ok").hidden = false;
-  location.href = href;
+  open("mailto:" + to + "?subject=" + enc(su) + "&body=" + enc(body));
 })();
 </script>
 </body>
