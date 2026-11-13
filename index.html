@@ -26,6 +26,12 @@
   var open = function (href) {
     document.getElementById("open").href = href;
     document.getElementById("ok").hidden = false;
+    // Once the mail app is in front, the page is hidden: close it then,
+    // not at the jump, which a close could cancel. A browser that refuses
+    // the close leaves the page as it is.
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden) window.close();
+    });
     location.href = href;
   };
   if (q.has("msg")) {
